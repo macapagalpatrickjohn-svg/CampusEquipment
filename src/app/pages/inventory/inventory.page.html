@@ -1,0 +1,53 @@
+<header class="page-head title-row">
+  <div><span class="kicker">EQUIPMENT DESK</span>
+    <h1 id="inventory-heading">Inventory</h1>
+    <p>Browse equipment and open the label for each physical unit.</p>
+  </div>
+  <a class="button primary square" routerLink="/add" aria-label="Add equipment"><ion-icon name="add-outline"></ion-icon></a>
+</header>
+@if (error || success) {
+  <p id="inventory-feedback" class="notice" [class.error]="error" [class.success]="success" [attr.role]="error ? 'alert' : 'status'">{{ error || success }}</p>
+}
+@if (selected(); as item) {
+  <section id="unit-panel" class="card panel">
+    <div class="section-head flush">
+      <div><span class="kicker">UNIT LABELS</span><h2>{{ item.equipmentName }}</h2></div>
+      <button type="button" class="button secondary" (click)="close()">Close</button>
+    </div>
+    <unit-labels [units]="store.unitsFor(item.itemId)"></unit-labels>
+  </section>
+}
+@if (store.records().equipment.length === 0) {
+  <section class="card empty"><span class="tile"><ion-icon name="layers-outline"></ion-icon></span>
+    <h2>No equipment registered yet</h2><p>Add your first item to start tracking stock and loans.</p>
+    <a class="button primary" routerLink="/add">Add equipment</a>
+  </section>
+} @else {
+  <label class="search-field"><ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+    <input type="search" placeholder="Search equipment or Unit ID" aria-label="Search equipment or Unit ID"
+      [ngModel]="query()" (ngModelChange)="query.set($event)">
+  </label>
+  <div class="section-head">
+    <h2>Equipment <span class="count">{{ filtered().length }}</span></h2>
+    @if (!admin.unlocked()) { <a class="small-link" routerLink="/admin">Unlock to manage</a> }
+  </div>
+  @if (filtered().length === 0) { <p class="notice">No matching equipment or unit IDs.</p> }
+  <div class="product-grid">
+    @for (item of filtered(); track item.itemId) {
+      <article class="card product">
+        <equipment-photo [key]="item.equipmentPhoto" [name]="item.equipmentName"></equipment-photo>
+        <div class="product-body">
+          <h2>{{ item.equipmentName }}</h2>
+          <div class="stock"><span class="badge" [class.warning]="store.available(item) === 0">{{ store.available(item) }} available</span><span>{{ item.totalQuantity }} total</span></div>
+          <button class="button secondary unit-button" type="button" (click)="select(item)"><ion-icon name="qr-code-outline"></ion-icon> Unit labels</button>
+          @if (admin.unlocked()) {
+            <div class="manage-actions">
+              <a class="button text" [routerLink]="['/inventory', item.itemId, 'edit']"><ion-icon name="create-outline"></ion-icon> Edit</a>
+              <button class="button text danger" type="button" [disabled]="pending" (click)="remove(item)"><ion-icon name="trash-outline"></ion-icon> Delete</button>
+            </div>
+          }
+        </div>
+      </article>
+    }
+  </div>
+}

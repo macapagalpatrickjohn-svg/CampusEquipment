@@ -1,0 +1,7 @@
+{
+  "name": "campus-equipment",
+  "type": "angular",
+  "integrations": {
+    "capacitor": {}
+  }
+}

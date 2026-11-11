@@ -1,0 +1,37 @@
+<header class="page-head">
+  <span class="kicker">INVENTORY / STOCK</span>
+  <h1>Equipment inventory</h1>
+  <p>Check available units and reopen QR labels for printing.</p>
+</header>
+@if (selected(); as item) {
+  <section class="card panel qr-panel" aria-label="QR label">
+    <h2>{{ item.equipmentName }} QR label</h2>
+    @if (qr) {
+      <img class="qr" [src]="qr" alt="Equipment QR code">
+      <p class="item-id">{{ item.itemId }}</p>
+      <button class="button primary" type="button" [disabled]="busy" (click)="download()"><ion-icon name="arrow-down-outline"></ion-icon> Download QR code</button>
+    }
+    @if (feedback) { <p class="notice" role="status">{{ feedback }}</p> }
+    <button class="button text" type="button" [disabled]="busy" (click)="selected.set(undefined)">Close label</button>
+  </section>
+}
+@if (store.records().equipment.length === 0) {
+  <section class="card empty"><span class="tile"><ion-icon name="layers-outline"></ion-icon></span>
+    <h2>No equipment registered yet</h2><p>Add your first item to start tracking stock and loans.</p>
+    <a class="button primary" routerLink="/add">Add equipment</a>
+  </section>
+} @else {
+  <div class="card-list">
+    @for (item of store.records().equipment; track item.itemId) {
+      <article class="card record">
+        <equipment-photo [key]="item.equipmentPhoto" [name]="item.equipmentName"></equipment-photo>
+        <div class="record-details">
+          <h2>{{ item.equipmentName }}</h2>
+          <div class="stock"><span class="badge" [class.warning]="store.available(item) === 0">{{ store.available(item) }} available</span><span>{{ item.totalQuantity }} total</span></div>
+          <p class="item-id">{{ item.itemId }}</p>
+          <button class="button secondary compact" type="button" [disabled]="busy" (click)="showQr(item)"><ion-icon name="qr-code-outline"></ion-icon> View QR label</button>
+        </div>
+      </article>
+    }
+  </div>
+}

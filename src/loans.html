@@ -1,0 +1,29 @@
+<header class="page-head">
+  <span class="kicker">LOANS / ACTIVE RECORDS</span>
+  <h1>Borrowed equipment</h1>
+  <p>Review active loans by due date and check equipment back in.</p>
+</header>
+@if (success) { <p class="notice success" role="status">{{ success }}</p> }
+@if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+@if (store.records().active.length === 0) {
+  <section class="card empty"><span class="tile blue"><ion-icon name="reader-outline"></ion-icon></span>
+    <h2>No active loans</h2><p>Equipment that is checked out will appear here.</p>
+    <a class="button primary" routerLink="/borrow">Borrow equipment</a>
+  </section>
+} @else {
+  <div class="card-list">
+    @for (loan of store.records().active; track loan.borrowId) {
+      <article class="card record loan">
+        <equipment-photo [key]="loan.equipmentPhotoReference" [name]="loan.equipmentName"></equipment-photo>
+        <div class="record-details">
+          <h2>{{ loan.equipmentName }}</h2>
+          <dl><div><dt>Borrower</dt><dd>{{ loan.borrowerName }}</dd></div><div><dt>Student ID</dt><dd>{{ loan.studentId }}</dd></div></dl>
+          <div class="stock"><span class="badge" [class.warning]="loan.returnDate < localDate()">Due {{ loan.returnDate | date:'mediumDate' }}</span>
+            @if (loan.returnDate < localDate()) { <span class="overdue">Overdue</span> }
+          </div>
+          <button type="button" class="button secondary compact" [disabled]="!!pending" (click)="confirm(loan)"><ion-icon name="return-down-back-outline"></ion-icon> Return</button>
+        </div>
+      </article>
+    }
+  </div>
+}

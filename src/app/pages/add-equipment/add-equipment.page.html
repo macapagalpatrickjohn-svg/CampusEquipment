@@ -1,0 +1,47 @@
+<header class="page-head">
+  <span class="kicker">{{ editing ? 'INVENTORY / EDIT' : 'INVENTORY / REGISTER' }}</span>
+  <h1>{{ editing ? 'Edit equipment' : 'Add equipment' }}</h1>
+  <p>{{ editing ? 'Update the group and its physical units.' : 'Create a separate Unit ID and QR label for each piece of equipment.' }}</p>
+</header>
+@if (saved; as item) {
+  <section class="card panel" aria-labelledby="saved-heading">
+    <span class="tile"><ion-icon name="checkmark-circle-outline"></ion-icon></span>
+    <h2 id="saved-heading">{{ editing ? 'Equipment updated' : 'Equipment registered' }}</h2>
+    <p>{{ item.equipmentName }} · {{ item.totalQuantity }} units</p>
+    <unit-labels [units]="store.unitsFor(item.itemId)" [previewFirst]="!editing"></unit-labels>
+    <div class="actions centered">
+      @if (!editing) { <button class="button secondary" type="button" [disabled]="busy" (click)="reset()">Add another</button> }
+      <a class="button text" routerLink="/inventory">View inventory <ion-icon name="arrow-forward-outline"></ion-icon></a>
+    </div>
+  </section>
+} @else if (editing && !original) {
+  <p class="notice error" role="alert">This equipment is no longer in Inventory.</p>
+  <a class="button secondary" routerLink="/inventory">Back to Inventory</a>
+} @else {
+  <form class="card panel form" (ngSubmit)="submit()" novalidate>
+    <div class="fields">
+      <label>Equipment name<input name="name" type="text" placeholder="e.g. Portable projector" [(ngModel)]="name" maxlength="100" required [disabled]="busy"></label>
+      <label>Total quantity<input name="quantity" type="number" placeholder="e.g. 3" [(ngModel)]="quantity" inputmode="numeric" min="1" max="500" step="1" required [disabled]="busy"></label>
+    </div>
+    @if (editing) { <p class="notice">Reducing quantity removes the highest-numbered available units first. Labels for those units stop working.</p> }
+    <fieldset>
+      <legend>Equipment photo <span>{{ editing ? 'Optional replacement' : 'Required' }}</span></legend>
+      <div class="photo-picker">
+        @if (preview) { <img [src]="preview" alt="Selected equipment photo"> }
+        @else if (original; as item) { <equipment-photo [key]="item.equipmentPhoto" [name]="item.equipmentName"></equipment-photo> }
+        @else { <ion-icon name="image-outline" aria-hidden="true"></ion-icon><span>Choose a clear photo of the equipment.</span> }
+      </div>
+      <div class="actions">
+        @if (native) {
+          <button type="button" class="button secondary" [disabled]="busy" (click)="pick(camera)"><ion-icon name="camera-outline"></ion-icon> Camera</button>
+          <button type="button" class="button secondary" [disabled]="busy" (click)="pick(gallery)"><ion-icon name="image-outline"></ion-icon> Gallery</button>
+        } @else {
+          <input #fileInput type="file" accept="image/*" hidden (change)="upload($event)">
+          <button type="button" class="button secondary" [disabled]="busy" (click)="fileInput.click()"><ion-icon name="image-outline"></ion-icon> Choose photo</button>
+        }
+      </div>
+    </fieldset>
+    @if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+    <button class="button primary" type="submit" [disabled]="busy"><ion-icon name="qr-code-outline"></ion-icon>{{ busy ? 'Working…' : (editing ? 'Save changes' : 'Save equipment & generate QR') }}</button>
+  </form>
+}

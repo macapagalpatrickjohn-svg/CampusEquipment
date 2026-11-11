@@ -1,0 +1,27 @@
+<ul class="unit-list" aria-label="Unit IDs">
+  @for (unit of units(); track unit.unitId) {
+    <li>
+      <div class="unit-header">
+        <span class="unit-name">Unit {{ unit.number }}</span>
+        <span class="badge" [class.warning]="store.isBorrowed(unit.unitId)">{{ store.isBorrowed(unit.unitId) ? 'On loan' : 'Available' }}</span>
+      </div>
+      <p class="item-id">{{ unit.unitId }}</p>
+      @if (selected()?.unitId === unit.unitId) {
+        <div class="qr-panel">
+          @if (qr()) {
+            <img class="qr" [src]="qr()" [alt]="'QR code for unit ' + unit.number">
+            <button type="button" class="button primary" (click)="download()" [disabled]="saving"><ion-icon name="arrow-down-outline"></ion-icon> Download QR code</button>
+          } @else if (feedback()) {
+            <button class="button secondary" type="button" (click)="show(unit)">Retry QR preview</button>
+          } @else {
+            <p role="status">Generating QR image…</p>
+          }
+          @if (feedback()) { <p class="notice" role="status">{{ feedback() }}</p> }
+          <button class="button text" type="button" (click)="close()">Hide QR code</button>
+        </div>
+      } @else {
+        <button class="button secondary compact" type="button" (click)="show(unit)" [attr.aria-label]="'View QR for unit ' + unit.number"><ion-icon name="qr-code-outline"></ion-icon> View QR code</button>
+      }
+    </li>
+  }
+</ul>

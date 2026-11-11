@@ -1,0 +1,51 @@
+<header class="page-head">
+  <span class="kicker">INVENTORY / REGISTER</span>
+  <h1>Add equipment</h1>
+  <p>Create an inventory record and a printable QR label.</p>
+</header>
+@if (saved; as item) {
+  <section class="card panel qr-panel" aria-labelledby="saved-heading">
+    <span class="tile"><ion-icon name="checkmark-circle-outline"></ion-icon></span>
+    <h2 id="saved-heading">Equipment registered</h2>
+    <p>{{ item.equipmentName }} · {{ item.totalQuantity }} units</p>
+    @if (qr) {
+      <img class="qr" [src]="qr" alt="QR code for the equipment Item ID">
+      <p class="item-id">{{ item.itemId }}</p>
+      <button type="button" class="button primary" (click)="download()" [disabled]="busy"><ion-icon name="arrow-down-outline"></ion-icon> Download QR code</button>
+    } @else if (qrFeedback) {
+      <button type="button" class="button secondary" (click)="renderQr()">Retry QR preview</button>
+    } @else {
+      <p role="status">Generating QR preview…</p>
+    }
+    @if (qrFeedback) { <p class="notice" role="status">{{ qrFeedback }}</p> }
+    <div class="actions centered">
+      <button class="button secondary" type="button" [disabled]="busy" (click)="reset()">Add another</button>
+      <a class="button text" routerLink="/inventory">View inventory <ion-icon name="arrow-forward-outline"></ion-icon></a>
+    </div>
+  </section>
+} @else {
+  <form class="card panel form" (ngSubmit)="submit()" novalidate>
+    <div class="fields">
+      <label>Equipment name<input name="name" type="text" placeholder="e.g. Portable projector" [(ngModel)]="name" maxlength="100" required [disabled]="busy"></label>
+      <label>Total quantity<input name="quantity" type="number" placeholder="e.g. 3" [(ngModel)]="quantity" inputmode="numeric" min="1" step="1" required [disabled]="busy"></label>
+    </div>
+    <fieldset>
+      <legend>Equipment photo <span>Required</span></legend>
+      <div class="photo-picker">
+        @if (preview) { <img [src]="preview" alt="Selected equipment photo"> }
+        @else { <ion-icon name="image-outline" aria-hidden="true"></ion-icon><span>Choose a clear photo of the equipment.</span> }
+      </div>
+      <div class="actions">
+        @if (native) {
+          <button type="button" class="button secondary" [disabled]="busy" (click)="pick(camera)"><ion-icon name="camera-outline"></ion-icon> Camera</button>
+          <button type="button" class="button secondary" [disabled]="busy" (click)="pick(gallery)"><ion-icon name="image-outline"></ion-icon> Gallery</button>
+        } @else {
+          <input #fileInput type="file" accept="image/*" hidden (change)="upload($event)">
+          <button type="button" class="button secondary" [disabled]="busy" (click)="fileInput.click()"><ion-icon name="image-outline"></ion-icon> Choose photo</button>
+        }
+      </div>
+    </fieldset>
+    @if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+    <button class="button primary" type="submit" [disabled]="busy"><ion-icon name="qr-code-outline"></ion-icon>{{ busy ? 'Working…' : 'Save equipment & generate QR' }}</button>
+  </form>
+}

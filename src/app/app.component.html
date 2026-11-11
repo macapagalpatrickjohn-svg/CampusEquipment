@@ -1,0 +1,37 @@
+<ion-app>
+  <header class="top">
+    <div class="frame mast">
+      <a class="brand" routerLink="/" aria-label="Campus Equipment dashboard">
+        <span class="mark"><ion-icon name="cube-outline" aria-hidden="true"></ion-icon></span>
+        <span>Campus Equipment<small>INVENTORY &amp; BORROWING</small></span>
+      </a>
+      @if (admin.unlocked()) {
+        <button class="local" type="button" (click)="lock()"><ion-icon name="lock-closed-outline"></ion-icon> Lock admin</button>
+      } @else {
+        <a class="local" routerLink="/admin"><ion-icon name="shield-checkmark-outline"></ion-icon> Admin</a>
+      }
+    </div>
+  </header>
+  <ion-content #scroll>
+    <main class="frame body">
+      @if (store.loading()) {
+        <p class="notice" role="status">Opening local records…</p>
+      } @else if (store.error()) {
+        <div class="notice error" role="alert">{{ store.error() }}
+          <button class="button secondary" type="button" (click)="store.refresh()">Retry</button>
+        </div>
+      } @else {
+        <router-outlet (activate)="scroll.scrollToTop()"></router-outlet>
+      }
+    </main>
+  </ion-content>
+  <nav class="tabs" aria-label="Main navigation">
+    <div class="frame tab-row">
+      @for (tab of tabs; track tab.path) {
+        <a [routerLink]="tab.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">
+          <ion-icon [name]="tab.icon" aria-hidden="true"></ion-icon><span>{{ tab.label }}</span>
+        </a>
+      }
+    </div>
+  </nav>
+</ion-app>

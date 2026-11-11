@@ -1,0 +1,24 @@
+<div class="hero">
+  <div class="eyebrow"><span></span> EQUIPMENT DESK</div>
+  <h1>Inventory overview</h1>
+  <p>Register equipment, check what’s available, and keep track of what’s out on loan.</p>
+  <div class="actions">
+    <a class="button bright" routerLink="/borrow"><ion-icon name="qr-code-outline"></ion-icon> Scan to borrow</a>
+    <a class="button ghost" routerLink="/add">Add equipment <ion-icon name="arrow-forward-outline"></ion-icon></a>
+  </div>
+</div>
+<section aria-labelledby="stock">
+  <div class="section-head"><h2 id="stock">Stock at a glance</h2><span>{{ totals().types }} equipment records</span></div>
+  <div class="metrics">
+    <a routerLink="/inventory"><ion-icon name="layers-outline"></ion-icon><strong>{{ totals().units }}</strong><span>Total units</span></a>
+    <a routerLink="/inventory"><ion-icon name="checkmark-circle-outline"></ion-icon><strong>{{ totals().available }}</strong><span>Available</span></a>
+    <a routerLink="/loans"><ion-icon name="time-outline"></ion-icon><strong>{{ totals().borrowed }}</strong><span>On loan</span></a>
+  </div>
+</section>
+<section aria-labelledby="shortcuts">
+  <div class="section-head"><h2 id="shortcuts">Equipment desk shortcuts</h2></div>
+  <div class="shortcuts">
+    <a class="card shortcut" routerLink="/inventory"><span class="tile"><ion-icon name="layers-outline"></ion-icon></span><span><strong>Browse inventory</strong><small>View stock and download QR labels</small></span><ion-icon name="arrow-forward-outline"></ion-icon></a>
+    <a class="card shortcut" routerLink="/loans"><span class="tile blue"><ion-icon name="return-down-back-outline"></ion-icon></span><span><strong>Manage loans</strong><small>Check due dates and record returns</small></span><ion-icon name="arrow-forward-outline"></ion-icon></a>
+  </div>
+</section>

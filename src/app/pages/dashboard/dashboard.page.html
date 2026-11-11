@@ -1,0 +1,34 @@
+<header class="page-head dashboard-heading">
+  <span class="kicker">CAMPUS EQUIPMENT DESK</span>
+  <h1>Inventory<br>dashboard</h1>
+  <p>See what’s in stock and what’s out on loan.</p>
+</header>
+<section class="overview" aria-labelledby="stock">
+  <div class="section-head flush"><h2 id="stock">Stock overview</h2><span class="overview-chip"><ion-icon name="layers-outline"></ion-icon> {{ totals().types }} equipment types</span></div>
+  <div class="metrics">
+    <a routerLink="/inventory"><ion-icon name="layers-outline"></ion-icon><strong>{{ totals().units }}</strong><span>Total units</span></a>
+    <a routerLink="/inventory"><ion-icon name="checkmark-circle-outline"></ion-icon><strong>{{ totals().available }}</strong><span>Available</span></a>
+    <a routerLink="/loans"><ion-icon name="time-outline"></ion-icon><strong>{{ totals().borrowed }}</strong><span>On loan</span></a>
+  </div>
+</section>
+<section class="stock-status" aria-labelledby="status-heading">
+  <div>
+    <h2 id="status-heading">Stock status</h2>
+    <div class="legend-row"><i></i> Available <strong>{{ totals().available }}</strong></div>
+    <div class="legend-row"><i></i> On loan <strong>{{ totals().borrowed }}</strong></div>
+  </div>
+  <div class="donut" [style.--share]="totals().share + '%'" [class.is-empty]="totals().units === 0" aria-hidden="true">
+    <div><strong>{{ totals().units }}</strong><small>Total units</small></div>
+  </div>
+</section>
+<div class="actions dashboard-actions">
+  <a class="button primary" routerLink="/borrow"><ion-icon name="qr-code-outline"></ion-icon> Scan to borrow</a>
+  <a class="button secondary" routerLink="/add"><ion-icon name="add-outline"></ion-icon> Add equipment</a>
+</div>
+<section aria-labelledby="shortcuts">
+  <div class="section-head"><h2 id="shortcuts">Quick access</h2></div>
+  <div class="shortcuts">
+    <a class="card shortcut" routerLink="/inventory"><span class="tile"><ion-icon name="layers-outline"></ion-icon></span><span><strong>Browse inventory</strong><small>View stock and unit labels</small></span><ion-icon name="arrow-forward-outline"></ion-icon></a>
+    <a class="card shortcut" routerLink="/loans"><span class="tile"><ion-icon name="return-down-back-outline"></ion-icon></span><span><strong>Manage loans</strong><small>Record returns and review history</small></span><ion-icon name="arrow-forward-outline"></ion-icon></a>
+  </div>
+</section>

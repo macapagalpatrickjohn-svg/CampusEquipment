@@ -1,0 +1,34 @@
+<header class="page-head">
+  <span class="kicker">LOANS / CHECKOUT</span>
+  <h1>Borrow equipment</h1>
+  <p>Identify an item, then record who is borrowing one unit.</p>
+</header>
+<section class="card panel">
+  <h2><span class="step">1</span> Identify equipment</h2>
+  <button type="button" class="button primary" [disabled]="busy" (click)="identify(true)"><ion-icon name="qr-code-outline"></ion-icon> Scan QR code</button>
+  <form class="manual" (ngSubmit)="identify(false)">
+    <label>Or enter the Item ID<input name="manualId" type="text" autocomplete="off" spellcheck="false" placeholder="EQ-…" [(ngModel)]="manualId" [disabled]="busy"></label>
+    <button class="button secondary" type="submit" [disabled]="busy">Find item</button>
+  </form>
+</section>
+@if (success) { <p class="notice success" role="status">{{ success }} <a routerLink="/loans">View loans</a></p> }
+@if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+@if (item; as chosen) {
+  <form class="card panel form" (ngSubmit)="submit()" novalidate>
+    <h2><span class="step">2</span> Borrower details</h2>
+    <div class="record preview-record">
+      <equipment-photo [key]="chosen.equipmentPhoto" [name]="chosen.equipmentName"></equipment-photo>
+      <div class="record-details">
+        <h3>{{ chosen.equipmentName }}</h3>
+        <span class="badge" [class.warning]="store.available(chosen) === 0">{{ store.available(chosen) }} available</span>
+      </div>
+    </div>
+    @if (store.available(chosen) === 0) { <p class="notice error" role="status">All units are currently borrowed.</p> }
+    <label>Borrower name<input name="borrower" type="text" required maxlength="100" autocomplete="off" [(ngModel)]="borrower" [disabled]="busy"></label>
+    <div class="fields">
+      <label>Student ID<input name="studentId" type="text" required maxlength="40" autocomplete="off" [(ngModel)]="studentId" [disabled]="busy"></label>
+      <label>Return date<input name="due" type="date" required [min]="localDate()" [(ngModel)]="due" [disabled]="busy"></label>
+    </div>
+    <button class="button primary" type="submit" [disabled]="busy || store.available(chosen) === 0">{{ busy ? 'Working…' : 'Confirm borrowing · 1 unit' }}</button>
+  </form>
+}

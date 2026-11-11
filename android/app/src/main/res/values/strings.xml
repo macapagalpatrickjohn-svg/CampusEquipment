@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Campus Equipment</string>
+    <string name="title_activity_main">Campus Equipment</string>
+    <string name="package_name">edu.campus.equipment</string>
+    <string name="custom_url_scheme">edu.campus.equipment</string>
+</resources>
